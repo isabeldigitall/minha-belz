@@ -37,6 +37,14 @@ Depois envia `/start` ao teu bot no Telegram.
 - Áudios funcionam igual a texto (transcreve com Gemini)
 - **Organizar documentos**: escreve `/documentos` para configurares (escolhes o nome da pasta e as categorias). Depois envias uma foto ou PDF de uma fatura/recibo e a Belz lê, percebe o que é e guarda na pasta certa do teu Drive.
 
+## Atualizações automáticas
+
+A Belz mantém-se atualizada sozinha. Todas as madrugadas (e pouco depois de arrancar) verifica se a Isabel lançou novidades e, se houver, puxa o código novo, instala o que for preciso e avisa-te no Telegram.
+
+- Em **VPS com PM2**, reinicia-se sozinha — não fazes nada.
+- Em **PC**, recebe o código novo e avisa-te para fechar e reabrir (`npm start`).
+- Podes forçar a verificação a qualquer momento com o comando `/atualizar`.
+
 ## Licença
 
 MIT

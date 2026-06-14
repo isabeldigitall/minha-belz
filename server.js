@@ -21,6 +21,7 @@ const {
   formatReminderList,
 } = require("./reminders");
 const documents = require("./documents");
+const { checkAndUpdate } = require("./updater");
 
 const bot = new TelegramBot(config.TELEGRAM_BOT_TOKEN, {
   polling: {
@@ -98,6 +99,21 @@ bot.on("message", async (msg) => {
   // Comando para configurar / reconfigurar a organizacao de documentos
   if (msg.text && msg.text.startsWith("/documentos")) {
     await reply(chatId, documents.startSetup());
+    return;
+  }
+
+  // Comando para forcar a verificacao de novidades (o normal e automatico)
+  if (msg.text && msg.text.startsWith("/atualizar")) {
+    await reply(chatId, "A verificar se a Isabel lancou novidades... 🔄");
+    try {
+      const res = await checkAndUpdate((t) => reply(chatId, t));
+      if (!res.updated) {
+        await reply(chatId, "Ja estas na versao mais recente! ✅");
+      }
+    } catch (err) {
+      log(`Erro /atualizar: ${err.message}`);
+      await reply(chatId, "Nao consegui verificar agora. Tenta mais tarde.");
+    }
     return;
   }
 
@@ -376,8 +392,36 @@ cron.schedule(
   { timezone: config.TIMEZONE },
 );
 
+// === AUTO-UPDATE ===
+// Helper: envia a aluna (owner) uma mensagem, se ja a conhecemos
+async function notifyOwner(text) {
+  const owner = getOwnerChatId();
+  if (owner) await reply(owner, text);
+}
+
+// Todas as madrugadas as 4h: verifica novidades e atualiza-se sozinha
+cron.schedule(
+  "0 4 * * *",
+  async () => {
+    try {
+      await checkAndUpdate(notifyOwner);
+    } catch (err) {
+      log(`Erro auto-update: ${err.message}`);
+    }
+  },
+  { timezone: config.TIMEZONE },
+);
+
+// Tambem verifica uma vez pouco depois do arranque (apanha quem esteve desligado)
+setTimeout(() => {
+  checkAndUpdate(notifyOwner).catch((err) =>
+    log(`Erro auto-update (arranque): ${err.message}`),
+  );
+}, 60 * 1000);
+
 log("A tua Belz a iniciar...");
 log(
   `Owner: ${config.OWNER_NAME} | TZ: ${config.TIMEZONE} | Briefing: ${config.BRIEFING_HOUR}h`,
 );
+log("Auto-update ativo (verificacao diaria as 4h).");
 log("Envia /start ao bot no Telegram para comecar.");
