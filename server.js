@@ -20,6 +20,7 @@ const {
   saveReminders,
   formatReminderList,
 } = require("./reminders");
+const documents = require("./documents");
 
 const bot = new TelegramBot(config.TELEGRAM_BOT_TOKEN, {
   polling: {
@@ -86,10 +87,23 @@ bot.on("message", async (msg) => {
       `Ola ${config.OWNER_NAME}! Sou a tua assistente pessoal.\n\n` +
         `O que posso fazer:\n` +
         `Consultar e criar eventos na agenda\n` +
-        `Criar e gerir lembretes\n\n` +
+        `Criar e gerir lembretes\n` +
+        `Organizar os teus documentos no Drive (envia-me uma foto ou PDF)\n\n` +
         `Todas as manhas as ${config.BRIEFING_HOUR}h envio o resumo do dia.\n\n` +
-        `Experimenta: "O que tenho amanha?"`,
+        `Experimenta: "O que tenho amanha?" ou escreve /documentos`,
     );
+    return;
+  }
+
+  // Comando para configurar / reconfigurar a organizacao de documentos
+  if (msg.text && msg.text.startsWith("/documentos")) {
+    await reply(chatId, documents.startSetup());
+    return;
+  }
+
+  // Foto ou PDF enviado = documento para organizar
+  if (msg.photo || isDocumentFile(msg.document)) {
+    await handleDocument(msg, chatId);
     return;
   }
 
@@ -101,9 +115,64 @@ bot.on("message", async (msg) => {
   const text = msg.text || "";
   if (!text.trim()) return;
 
+  // Se estamos a meio do setup de documentos, a resposta e para o setup
+  if (documents.isAwaitingSetup()) {
+    const out = await documents.handleSetupReply(text);
+    await reply(chatId, out);
+    return;
+  }
+
   const result = await understand(text);
   await dispatch(result, chatId);
 });
+
+function isDocumentFile(doc) {
+  if (!doc) return false;
+  const ok = ["image/", "application/pdf"];
+  const mime = doc.mime_type || "";
+  return ok.some((p) => mime.startsWith(p));
+}
+
+async function handleDocument(msg, chatId) {
+  try {
+    // Se ainda nao configurou, comeca o setup e pede para reenviar depois
+    if (!documents.isConfigured()) {
+      await reply(chatId, documents.startSetup());
+      return;
+    }
+
+    let fileId, fileName;
+    if (msg.photo) {
+      // O ultimo elemento e a maior resolucao
+      fileId = msg.photo[msg.photo.length - 1].file_id;
+      fileName = `documento-${Date.now()}.jpg`;
+    } else {
+      fileId = msg.document.file_id;
+      fileName = msg.document.file_name || `documento-${Date.now()}.pdf`;
+    }
+
+    await reply(chatId, "Recebi! A ler o documento... 🔎");
+
+    const fileUrl = await bot.getFileLink(fileId);
+    const buffer = await downloadBuffer(fileUrl);
+    const result = await documents.processDocument(buffer, fileName);
+
+    if (result.needsSetup) {
+      await reply(chatId, documents.startSetup());
+      return;
+    }
+    await reply(
+      chatId,
+      result.message || "Nao consegui guardar o documento. Tenta de novo.",
+    );
+  } catch (err) {
+    log(`Erro handleDocument: ${err.message}`);
+    await reply(
+      chatId,
+      "Tive um problema a guardar o documento. Tenta de novo.",
+    );
+  }
+}
 
 async function dispatch(result, chatId) {
   switch (result.intent) {

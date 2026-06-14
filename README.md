@@ -1,6 +1,6 @@
 # Minha Belz
 
-A tua assistente pessoal via Telegram. Responde a mensagens de texto e voz em português, marca eventos no Google Calendar, gere lembretes e envia-te todas as manhãs o resumo do dia.
+A tua assistente pessoal via Telegram. Responde a mensagens de texto e voz em português, marca eventos no Google Calendar, gere lembretes, **organiza os teus documentos no Google Drive** e envia-te todas as manhãs o resumo do dia.
 
 ## O que precisas
 
@@ -35,6 +35,7 @@ Depois envia `/start` ao teu bot no Telegram.
 - "Lembra-me de pagar a luz na sexta" — cria lembrete (notifica no Telegram)
 - "Que lembretes tenho?" — lista pendentes
 - Áudios funcionam igual a texto (transcreve com Gemini)
+- **Organizar documentos**: escreve `/documentos` para configurares (escolhes o nome da pasta e as categorias). Depois envias uma foto ou PDF de uma fatura/recibo e a Belz lê, percebe o que é e guarda na pasta certa do teu Drive.
 
 ## Licença
 

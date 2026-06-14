@@ -2,5 +2,7 @@ node_modules/
 .env
 oauth-token.json
 reminders.json
+doc-config.json
+.owner_chat_id
 *.log
 .DS_Store

@@ -24,4 +24,5 @@ module.exports = {
   OAUTH_TOKEN_PATH: path.join(__dirname, "oauth-token.json"),
   REMINDERS_FILE: path.join(__dirname, "reminders.json"),
   OWNER_FILE: path.join(__dirname, ".owner_chat_id"),
+  DOC_CONFIG_FILE: path.join(__dirname, "doc-config.json"),
 };

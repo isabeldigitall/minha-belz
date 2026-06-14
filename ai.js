@@ -172,6 +172,69 @@ async function transcribeAudio(audioBuffer) {
   }
 }
 
+// Le um documento (foto ou PDF) e classifica-o numa das categorias da aluna.
+// Devolve { category, summary, date, total } ou null se nao conseguir ler.
+async function classifyDocument(imageBuffer, fileName, categories) {
+  const ext = (fileName.split(".").pop() || "").toLowerCase();
+  const mimeMap = {
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    pdf: "application/pdf",
+    heic: "image/heic",
+    webp: "image/webp",
+  };
+  const mimeType = mimeMap[ext] || "image/jpeg";
+  const base64 = imageBuffer.toString("base64");
+  const catList = (categories && categories.length ? categories : ["Outros"])
+    .map((c) => `"${c}"`)
+    .join(", ");
+
+  const prompt = `Es uma assistente que organiza documentos (faturas, recibos, extratos, cartas, etc.).
+Analisa este documento e classifica-o numa destas categorias: [${catList}].
+Se nao encaixar em nenhuma, usa "Outros".
+
+Responde APENAS em JSON, sem markdown nem backticks, com esta estrutura exata:
+{
+  "category": "uma das categorias acima",
+  "summary": "descricao curta do documento em 3-6 palavras (ex: 'Fatura da EDP', 'Recibo de agua')",
+  "date": "data do documento em YYYY-MM-DD ou null se nao houver",
+  "total": "valor total com moeda se existir (ex: '45,90 EUR') ou null"
+}`;
+
+  const body = JSON.stringify({
+    contents: [
+      {
+        parts: [{ inlineData: { mimeType, data: base64 } }, { text: prompt }],
+      },
+    ],
+    generationConfig: {
+      temperature: 0.1,
+      maxOutputTokens: 300,
+      thinkingConfig: { thinkingBudget: 0 },
+    },
+  });
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${config.GEMINI_API_KEY}`;
+
+  try {
+    const data = await postJSON(url, body);
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    let cleaned = text
+      .replace(/```json\n?/g, "")
+      .replace(/```\n?/g, "")
+      .trim();
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (jsonMatch) cleaned = jsonMatch[0];
+    const result = JSON.parse(cleaned);
+    log(`[DOCS] Classificacao: ${result.category} — ${result.summary}`);
+    return result;
+  } catch (err) {
+    log(`[DOCS] Erro a classificar: ${err.message}`);
+    return null;
+  }
+}
+
 function postJSON(url, body) {
   return new Promise((resolve, reject) => {
     const parsed = new URL(url);
@@ -201,4 +264,9 @@ function postJSON(url, body) {
   });
 }
 
-module.exports = { understand, transcribeAudio, addToHistory };
+module.exports = {
+  understand,
+  transcribeAudio,
+  addToHistory,
+  classifyDocument,
+};
