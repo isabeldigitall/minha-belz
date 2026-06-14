@@ -37,7 +37,7 @@ function isConfigured() {
 }
 
 const DEFAULT_CATEGORIES = ["Banco", "Estado", "Fornecedores", "Vendas"];
-const DEFAULT_FOLDER_NAME = "Documentos Belz";
+const DEFAULT_FOLDER_NAME = `Documentos ${config.ASSISTANT_NAME}`;
 
 // --- Drive helpers (OAuth da aluna) ---
 function getDrive() {

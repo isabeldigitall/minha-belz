@@ -85,7 +85,7 @@ bot.on("message", async (msg) => {
   if (msg.text && msg.text.startsWith("/start")) {
     await reply(
       chatId,
-      `Ola ${config.OWNER_NAME}! Sou a tua assistente pessoal.\n\n` +
+      `Ola ${config.OWNER_NAME}! Sou a ${config.ASSISTANT_NAME}, a tua assistente pessoal.\n\n` +
         `O que posso fazer:\n` +
         `Consultar e criar eventos na agenda\n` +
         `Criar e gerir lembretes\n` +
@@ -419,7 +419,7 @@ setTimeout(() => {
   );
 }, 60 * 1000);
 
-log("A tua Belz a iniciar...");
+log(`A tua ${config.ASSISTANT_NAME} a iniciar...`);
 log(
   `Owner: ${config.OWNER_NAME} | TZ: ${config.TIMEZONE} | Briefing: ${config.BRIEFING_HOUR}h`,
 );

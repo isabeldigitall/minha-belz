@@ -3,7 +3,7 @@ const config = require("./config");
 const { log } = require("./utils");
 
 function buildSystemPrompt() {
-  return `Tu es a assistente pessoal da ${config.OWNER_NAME}. Respondes sempre em portugues, de forma simpatica e direta.
+  return `Chamas-te ${config.ASSISTANT_NAME} e es a assistente pessoal da ${config.OWNER_NAME}. Respondes sempre em portugues, de forma simpatica e direta.
 
 A data e hora atual sera fornecida em cada mensagem.
 
@@ -69,7 +69,8 @@ function getHistoryText() {
   if (conversationHistory.length === 0) return "";
   return conversationHistory
     .map((h) => {
-      const who = h.role === "owner" ? config.OWNER_NAME : "Belz";
+      const who =
+        h.role === "owner" ? config.OWNER_NAME : config.ASSISTANT_NAME;
       return `${who}: ${h.text}`;
     })
     .join("\n");

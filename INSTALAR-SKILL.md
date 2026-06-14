@@ -1,6 +1,6 @@
-# Como instalar a skill "Minha Belz" no teu Claude Code
+# Como instalar a tua assistente (super simples)
 
-A skill é o teu guia passo-a-passo para criar a tua própria assistente Telegram. Depois de instalada, basta dizeres ao Claude Code "quero criar a minha assistente" e ela conduz-te por tudo.
+Esta skill é o teu guia. Depois de instalada, o Claude faz-te todas as perguntas e põe a tua assistente a funcionar — incluindo escolheres o nome dela (podes manter "Belz" ou dar o teu próprio).
 
 ## Antes de começar
 
@@ -9,71 +9,42 @@ Se ainda não tens: https://claude.com/claude-code
 
 ---
 
-## Instalação (5 minutos)
+## Instalação (2 minutos)
 
 ### Passo 1 — Descarregar a skill
 
-Descarrega o ficheiro `belz-mentoradas-skill.zip` (a Isabel envia-te por WhatsApp ou email).
+Descarrega o ficheiro `belz-mentoradas-skill.zip` (a Isabel envia-te). Repara onde ele ficou (normalmente na pasta **Transferências/Downloads**).
 
-### Passo 2 — Encontrar a pasta de skills do Claude Code
+### Passo 2 — Pedir ao Claude para instalar
 
-Abre o **Terminal** (Mac) ou **PowerShell** (Windows) e cola:
+Abre o **Claude Code** e escreve uma mensagem assim (ajusta o nome da pasta se for preciso):
 
-**Mac / Linux:**
+> Tenho o ficheiro `belz-mentoradas-skill.zip` na pasta Downloads. Instala-me essa skill: descompacta-a e põe a pasta `belz-mentoradas` dentro de `~/.claude/skills/`.
 
-```bash
-mkdir -p ~/.claude/skills && open ~/.claude/skills
-```
+O Claude trata de tudo sozinho (descompacta e coloca no sítio certo). Se ele perguntar onde está o ficheiro, diz-lhe o caminho (ex: `~/Downloads/belz-mentoradas-skill.zip`).
 
-**Windows (PowerShell):**
-
-```powershell
-mkdir -Force "$HOME\.claude\skills"; explorer "$HOME\.claude\skills"
-```
-
-Vai abrir uma janela do Finder/Explorador na pasta certa.
-
-### Passo 3 — Descompactar e mover
-
-1. Descompacta o `belz-mentoradas-skill.zip` (clica duas vezes no Mac, botão direito → Extrair no Windows)
-2. Vais ficar com uma pasta chamada `belz-mentoradas`
-3. **Arrasta essa pasta para a janela aberta no Passo 2** (a pasta `~/.claude/skills/`)
-
-No fim deves ter:
-
-```
-~/.claude/skills/belz-mentoradas/SKILL.md
-```
-
-### Passo 4 — Verificar
-
-No terminal, cola:
-
-**Mac / Linux:**
-
-```bash
-ls ~/.claude/skills/belz-mentoradas/
-```
-
-**Windows:**
-
-```powershell
-dir "$HOME\.claude\skills\belz-mentoradas"
-```
-
-Deves ver `SKILL.md` listado. Se sim, está instalada.
-
-### Passo 5 — Reabrir o Claude Code
+### Passo 3 — Reabrir o Claude Code
 
 Fecha completamente o Claude Code e abre de novo (para ele ler a nova skill).
 
-### Passo 6 — Usar
+### Passo 4 — Criar a tua assistente
 
 No Claude Code, escreve:
 
 > quero criar a minha assistente
 
-A Belz Mentoradas vai começar a conduzir-te pelo setup completo (~30 minutos). Aproveita!
+A partir daí o Claude conduz-te pelo setup completo (~30 minutos), uma pergunta de cada vez. A **primeira** coisa que te vai perguntar é o **nome** que queres dar à tua assistente. 😊
+
+---
+
+## Preferes fazer à mão?
+
+Se quiseres instalar manualmente em vez de pedir ao Claude:
+
+1. Descompacta o `belz-mentoradas-skill.zip` → ficas com uma pasta `belz-mentoradas`
+2. Move essa pasta para `~/.claude/skills/`
+3. No fim deves ter: `~/.claude/skills/belz-mentoradas/SKILL.md`
+4. Reabre o Claude Code
 
 ---
 

@@ -11,7 +11,10 @@ function required(name) {
 }
 
 module.exports = {
+  // Como a aluna quer ser tratada
   OWNER_NAME: process.env.OWNER_NAME || "Amiga",
+  // Nome da propria assistente (pode manter "Belz" ou dar um nome proprio)
+  ASSISTANT_NAME: process.env.ASSISTANT_NAME || "Belz",
   TELEGRAM_BOT_TOKEN: required("TELEGRAM_BOT_TOKEN"),
   GEMINI_API_KEY: required("GEMINI_API_KEY"),
   GOOGLE_CLIENT_ID: required("GOOGLE_CLIENT_ID"),
